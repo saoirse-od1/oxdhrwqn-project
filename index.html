@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Macbeth Quotes -- you got this odhran</title>
-  <p>use the anki style review one first </p>
+<title>Macbeth Quotes - u got this </title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -136,13 +135,30 @@
   .anki-dash-bar-wrap{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-bottom:8px;}
   .anki-dash-bar{height:6px;background:linear-gradient(90deg,#c9a84c,#a0e896);border-radius:99px;transition:width 0.6s ease;}
   .anki-dash-bar-label{font-size:11px;color:var(--text-dim);text-align:right;}
-  .due-badge{display:inline-block;background:rgba(192,57,43,0.25);color:#f08080;font-size:11px;padding:2px 8px;border-radius:99px;border:1px solid rgba(192,57,43,0.4);margin-left:6px;}</style>
+  .due-badge{display:inline-block;background:rgba(192,57,43,0.25);color:#f08080;font-size:11px;padding:2px 8px;border-radius:99px;border:1px solid rgba(192,57,43,0.4);margin-left:6px;}
+
+  /* MANAGE QUOTES SCREEN */
+  .manage-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;margin-bottom:8px;display:flex;align-items:flex-start;gap:14px;transition:border-color 0.15s;}
+  .manage-card.dismissed{opacity:0.4;}
+  .manage-card.dismissed .manage-quote-text{text-decoration:line-through;}
+  .manage-info{flex:1;min-width:0;}
+  .manage-quote-text{font-family:'Playfair Display',serif;font-size:14px;font-style:italic;line-height:1.6;color:var(--text);margin-bottom:4px;}
+  .manage-meta{font-size:11px;color:var(--text-dim);}
+  .manage-toggle{flex-shrink:0;width:36px;height:20px;background:var(--surface2);border:1px solid var(--border);border-radius:99px;cursor:pointer;position:relative;transition:background 0.2s,border-color 0.2s;}
+  .manage-toggle.on{background:rgba(192,57,43,0.3);border-color:#8b1a1a;}
+  .manage-toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--text-dim);transition:transform 0.2s,background 0.2s;}
+  .manage-toggle.on::after{transform:translateX(16px);background:#f08080;}
+  .manage-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;}
+  .manage-count{font-size:13px;color:var(--text-dim);}
+  .manage-search{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;width:100%;margin-bottom:1rem;}
+  .manage-search::placeholder{color:var(--text-dim);}
+  .manage-section{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin:1rem 0 6px;}</style>
 </head>
 <body>
 <div class="container">
   <header class="site-header">
     <h1>Macbeth</h1>
-    <p>Leaving Cert English — Quotes Game</p>
+    <p>start with anki the third one and any quotes u dont want press manage quotes to delete </p>
   </header>
 
   <div id="home-screen">
@@ -185,6 +201,7 @@
       <button class="tab" data-theme="Character">Character quotes</button>
     </div>
     <button class="btn btn-primary" id="start-btn">Start Quiz →</button>
+    <button class="btn" id="manage-btn" style="width:100%;margin-top:8px;color:var(--text-dim)">✂ Manage quotes</button>
   </div>
 
   <div id="quiz-screen" style="display:none">
@@ -262,6 +279,15 @@
         </div>
       </div>
     </div>
+  </div>
+  <div id="manage-screen" style="display:none">
+    <div class="manage-topbar">
+      <button class="btn" id="manage-back-btn">← Back</button>
+      <span class="manage-count" id="manage-count"></span>
+      <button class="btn" id="manage-restore-btn" style="font-size:12px;color:var(--text-dim)">Restore all</button>
+    </div>
+    <input class="manage-search" id="manage-search" placeholder="Search quotes, speakers, themes…" type="text">
+    <div id="manage-list"></div>
   </div>
 </div>
 
@@ -435,9 +461,19 @@ const QUOTES = [
 const REMOVED = ['Scotland','Children','Clothing'];
 const LABEL = {'Appearance':'Appearance vs Reality','Masculinity':'Gender Roles'};
 const tLabel = t => LABEL[t] || t;
-const QUOTES_FILTERED = QUOTES.filter(q=>!REMOVED.includes(q.t));
-const THEMES = [...new Set(QUOTES_FILTERED.map(q=>q.t))].sort();
-const SPEAKERS = [...new Set(QUOTES_FILTERED.map(q=>q.s))].sort();
+const DISMISSED_KEY = 'macbeth_dismissed_v1';
+
+function loadDismissed(){ try{ return new Set(JSON.parse(localStorage.getItem(DISMISSED_KEY))||[]); } catch(e){ return new Set(); } }
+function saveDismissed(set){ localStorage.setItem(DISMISSED_KEY, JSON.stringify([...set])); }
+
+function getQuotesFiltered(){
+  const dismissed = loadDismissed();
+  return QUOTES.filter(q => !REMOVED.includes(q.t) && !dismissed.has(getCardKey(q)));
+}
+// keep a static reference for theme/speaker lists (includes dismissed so themes don't disappear)
+const QUOTES_BASE = QUOTES.filter(q=>!REMOVED.includes(q.t));
+const THEMES = [...new Set(QUOTES_BASE.map(q=>q.t))].sort();
+const SPEAKERS = [...new Set(QUOTES_BASE.map(q=>q.s))].sort();
 
 let mode='mcq', filterTheme='all', questions=[], current=0, score=0, answered=false;
 
@@ -464,7 +500,7 @@ document.getElementById('start-btn').addEventListener('click',()=>{
 
 function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
-function getPool(){return filterTheme==='all'?QUOTES_FILTERED:QUOTES_FILTERED.filter(q=>q.t===filterTheme);}
+function getPool(){const qf=getQuotesFiltered();return filterTheme==='all'?qf:qf.filter(q=>q.t===filterTheme);}
 
 function startQuiz(){
   const pool=getPool();
@@ -572,7 +608,7 @@ function showBrowse(){
   renderBrowse('all');
   const bf=document.getElementById('browse-filter');
   bf.innerHTML=['all',...THEMES].map(t=>
-    `<button class="tab ${t==='all'?'active':''}" data-theme="${t}">${t==='all'?'All ('+QUOTES_FILTERED.length+')':tLabel(t)}</button>`
+    `<button class="tab ${t==='all'?'active':''}" data-theme="${t}">${t==='all'?'All ('+getQuotesFiltered().length+')':tLabel(t)}</button>`
   ).join('');
   bf.querySelectorAll('.tab').forEach(tab=>{
     tab.addEventListener('click',()=>{
@@ -583,7 +619,7 @@ function showBrowse(){
 }
 
 function renderBrowse(theme){
-  const pool=theme==='all'?QUOTES_FILTERED:QUOTES_FILTERED.filter(q=>q.t===theme);
+  const pool=theme==='all'?getQuotesFiltered():getQuotesFiltered().filter(q=>q.t===theme);
   document.getElementById('browse-count').textContent=pool.length+' quotes';
   document.getElementById('browse-area').innerHTML=pool.map(q=>`
     <div class="browse-card">
@@ -649,7 +685,7 @@ function daysBetween(d1,d2){
 
 function updateDashboard(){
   const progress=loadProgress();
-  const all=QUOTES_FILTERED;
+  const all=getQuotesFiltered();
   let newCards=0,learning=0,due=0,known=0;
   all.forEach(q=>{
     const k=getCardKey(q);
@@ -850,6 +886,107 @@ document.getElementById('reset-progress-btn').addEventListener('click',()=>{
 
 // Init dashboard on load
 updateDashboard();
+
+// ── MANAGE QUOTES ──
+document.getElementById('manage-btn').addEventListener('click', showManage);
+document.getElementById('manage-back-btn').addEventListener('click', ()=>{
+  document.getElementById('manage-screen').style.display='none';
+  document.getElementById('home-screen').style.display='block';
+  updateDashboard();
+});
+document.getElementById('manage-restore-btn').addEventListener('click', ()=>{
+  if(confirm('Restore all dismissed quotes?')){
+    saveDismissed(new Set());
+    renderManageList('');
+    updateManageCount();
+  }
+});
+document.getElementById('manage-search').addEventListener('input', e=>{
+  renderManageList(e.target.value.trim().toLowerCase());
+});
+
+function showManage(){
+  document.getElementById('home-screen').style.display='none';
+  document.getElementById('manage-screen').style.display='block';
+  document.getElementById('manage-search').value='';
+  renderManageList('');
+  updateManageCount();
+}
+
+function updateManageCount(){
+  const dismissed=loadDismissed();
+  const total=QUOTES_BASE.length;
+  const active=total-dismissed.size;
+  document.getElementById('manage-count').textContent=active+' active · '+dismissed.size+' hidden';
+}
+
+function renderManageList(search){
+  const dismissed=loadDismissed();
+  // group by theme
+  const grouped={};
+  QUOTES_BASE.forEach(q=>{
+    const key=getCardKey(q);
+    const matchSearch=!search||
+      q.q.toLowerCase().includes(search)||
+      q.s.toLowerCase().includes(search)||
+      tLabel(q.t).toLowerCase().includes(search)||
+      q.m.toLowerCase().includes(search);
+    if(!matchSearch) return;
+    if(!grouped[q.t]) grouped[q.t]=[];
+    grouped[q.t].push({q, dismissed:dismissed.has(key), key});
+  });
+
+  const themes=Object.keys(grouped).sort();
+  if(!themes.length){
+    document.getElementById('manage-list').innerHTML='<p style="color:var(--text-dim);font-size:14px;text-align:center;padding:2rem">No quotes match that search.</p>';
+    return;
+  }
+
+  document.getElementById('manage-list').innerHTML=themes.map(theme=>`
+    <div class="manage-section">${tLabel(theme)}</div>
+    ${grouped[theme].map(({q,dismissed:dis,key})=>`
+      <div class="manage-card ${dis?'dismissed':''}" data-key="${key.replace(/"/g,'&quot;')}">
+        <div class="manage-info">
+          <div class="manage-quote-text">${q.q.length>120?q.q.slice(0,120)+'…':q.q}</div>
+          <div class="manage-meta">— ${q.s} · Act ${q.act}${dis?' · <span style="color:#f08080">Hidden</span>':''}</div>
+        </div>
+        <div class="manage-toggle ${dis?'on':''}" data-key="${key.replace(/"/g,'&quot;')}" title="${dis?'Click to restore':'Click to hide'}"></div>
+      </div>
+    `).join('')}
+  `).join('');
+
+  // wire up toggles
+  document.querySelectorAll('.manage-toggle').forEach(tog=>{
+    tog.addEventListener('click', e=>{
+      e.stopPropagation();
+      const key=tog.dataset.key;
+      const dismissed=loadDismissed();
+      const card=tog.closest('.manage-card');
+      if(dismissed.has(key)){
+        dismissed.delete(key);
+        tog.classList.remove('on');
+        card.classList.remove('dismissed');
+        card.querySelector('.manage-meta').innerHTML=card.querySelector('.manage-meta').innerHTML.replace(/·\s*<span[^>]*>Hidden<\/span>/,'');
+      } else {
+        dismissed.add(key);
+        tog.classList.add('on');
+        card.classList.add('dismissed');
+        if(!card.querySelector('.manage-meta').innerHTML.includes('Hidden')){
+          card.querySelector('.manage-meta').innerHTML+=' · <span style="color:#f08080">Hidden</span>';
+        }
+      }
+      saveDismissed(dismissed);
+      updateManageCount();
+    });
+  });
+
+  // whole card click also toggles
+  document.querySelectorAll('.manage-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      card.querySelector('.manage-toggle').click();
+    });
+  });
+}
 </script>
 </body>
 </html>
