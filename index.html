@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Macbeth Quotes Game</title>
+<title>Macbeth Quotes -- you got this odhran</title>
+  <p>use the anki style review one first </p>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -78,23 +79,36 @@
   .anki-stat{font-size:13px;color:var(--text-dim);display:flex;align-items:center;gap:4px;}
   .anki-stat span{font-weight:500;color:var(--text);}
   #anki-remain{font-size:13px;color:var(--text-dim);}
-  .anki-card-wrap{perspective:1000px;margin-bottom:1.5rem;}
-  .anki-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;min-height:280px;padding:2rem;cursor:pointer;transition:box-shadow 0.2s;position:relative;}
-  .anki-card:hover{border-color:rgba(201,168,76,0.3);}
-  .anki-badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:99px;background:var(--gold-dim);color:var(--gold);margin-bottom:1.25rem;letter-spacing:0.04em;text-transform:uppercase;}
-  .anki-quote{font-family:'Playfair Display',serif;font-size:clamp(15px,2.5vw,19px);line-height:1.75;color:var(--text);font-style:italic;}
+
+  /* progress bar on card */
+  .anki-prog-bar-wrap{width:100%;height:3px;background:var(--surface2);border-radius:99px;margin-bottom:1.5rem;}
+  .anki-prog-bar{height:3px;background:var(--gold);border-radius:99px;transition:width 0.4s ease;}
+
+  /* card - clean show/hide with fade */
+  .anki-card-wrap{margin-bottom:1.25rem;}
+  .anki-card-inner{width:100%;}
+  .anki-face{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;display:flex;flex-direction:column;width:100%;box-sizing:border-box;animation:ankiFadeIn 0.25s ease;}
+  .anki-front-face{}
+  .anki-back-face{border-color:rgba(201,168,76,0.25);}
+  @keyframes ankiFadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .anki-badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:99px;background:var(--gold-dim);color:var(--gold);margin-bottom:1.25rem;letter-spacing:0.04em;text-transform:uppercase;align-self:flex-start;}
+  .anki-quote{font-family:'Playfair Display',serif;font-size:clamp(14px,2.2vw,17px);line-height:1.75;color:var(--text);font-style:italic;flex:1;}
   .anki-quote::before{content:'\201C';color:var(--gold);font-size:1.3em;line-height:0;vertical-align:-0.3em;margin-right:2px;}
   .anki-quote::after{content:'\201D';color:var(--gold);font-size:1.3em;line-height:0;vertical-align:-0.3em;margin-left:2px;}
-  .anki-tap-hint{position:absolute;bottom:1.25rem;right:1.5rem;font-size:12px;color:var(--text-dim);letter-spacing:0.04em;}
+  .anki-tap-hint{font-size:12px;color:var(--text-dim);margin-top:1.25rem;align-self:flex-end;letter-spacing:0.04em;}
   .anki-reveal-info{margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border);}
   .anki-info-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
   .anki-info-label{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);min-width:52px;}
   .anki-info-val{font-size:14px;font-weight:500;color:var(--gold);}
   .anki-divider{height:1px;background:var(--border);margin:12px 0;}
   .anki-meaning{font-size:14px;color:var(--text-mid);line-height:1.7;}
+  .anki-hint-flip{font-size:11px;color:var(--text-dim);text-align:center;margin-bottom:8px;letter-spacing:0.03em;}
+
+  /* rating buttons */
   .anki-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem;}
-  .anki-btn{display:flex;flex-direction:column;align-items:center;padding:12px 8px;border-radius:var(--radius);border:1px solid var(--border);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;transition:all 0.15s;gap:3px;}
-  .anki-btn span{font-size:10px;font-weight:400;opacity:0.7;letter-spacing:0.03em;}
+  .anki-btn{display:flex;flex-direction:column;align-items:center;padding:12px 6px;border-radius:var(--radius);border:1px solid var(--border);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;transition:all 0.15s;gap:3px;}
+  .anki-btn .sub{font-size:10px;font-weight:400;opacity:0.7;letter-spacing:0.03em;}
+  .anki-btn .due{font-size:10px;font-weight:500;opacity:0.9;margin-top:2px;}
   .anki-again{background:rgba(139,26,26,0.25);border-color:#8b1a1a;color:#f08080;}
   .anki-again:hover{background:rgba(139,26,26,0.4);}
   .anki-hard{background:rgba(180,120,0,0.2);border-color:#8a6000;color:#e0a030;}
@@ -103,14 +117,26 @@
   .anki-good:hover{background:rgba(45,90,39,0.4);}
   .anki-easy{background:rgba(201,168,76,0.15);border-color:rgba(201,168,76,0.4);color:var(--gold);}
   .anki-easy:hover{background:rgba(201,168,76,0.25);}
+
+  /* end screen */
   .anki-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:1.5rem;}
   .anki-sum-box{background:var(--surface2);border-radius:var(--radius);padding:10px;text-align:center;}
   .anki-sum-num{font-size:22px;font-weight:500;margin-bottom:2px;}
   .anki-sum-lbl{font-size:11px;color:var(--text-dim);}
-  .anki-again .anki-sum-num{color:#f08080;}
-  .anki-hard .anki-sum-num{color:#e0a030;}
-  .anki-good .anki-sum-num{color:#a0e896;}
-  .anki-easy .anki-sum-num{color:var(--gold);}</style>
+
+  /* progress dashboard on home */
+  .anki-dash{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;}
+  .anki-dash-title{font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;}
+  .anki-dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem;}
+  .anki-dash-cell{background:var(--surface2);border-radius:var(--radius);padding:10px;text-align:center;}
+  .anki-dash-num{font-size:20px;font-weight:500;margin-bottom:2px;}
+  .anki-dash-lbl{font-size:11px;color:var(--text-dim);}
+  .anki-streak{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-mid);}
+  .anki-streak strong{color:var(--gold);font-size:16px;}
+  .anki-dash-bar-wrap{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-bottom:8px;}
+  .anki-dash-bar{height:6px;background:linear-gradient(90deg,#c9a84c,#a0e896);border-radius:99px;transition:width 0.6s ease;}
+  .anki-dash-bar-label{font-size:11px;color:var(--text-dim);text-align:right;}
+  .due-badge{display:inline-block;background:rgba(192,57,43,0.25);color:#f08080;font-size:11px;padding:2px 8px;border-radius:99px;border:1px solid rgba(192,57,43,0.4);margin-left:6px;}</style>
 </head>
 <body>
 <div class="container">
@@ -120,6 +146,23 @@
   </header>
 
   <div id="home-screen">
+    <div class="anki-dash" id="anki-dash">
+      <div class="anki-dash-title">
+        <span>Your Flashcard Progress</span>
+        <button class="btn" id="reset-progress-btn" style="font-size:11px;padding:3px 10px;color:var(--text-dim)">Reset</button>
+      </div>
+      <div class="anki-dash-grid">
+        <div class="anki-dash-cell"><div class="anki-dash-num" id="dash-new" style="color:var(--text-dim)">—</div><div class="anki-dash-lbl">New</div></div>
+        <div class="anki-dash-cell"><div class="anki-dash-num" id="dash-learning" style="color:#e0a030">—</div><div class="anki-dash-lbl">Learning</div></div>
+        <div class="anki-dash-cell"><div class="anki-dash-num" id="dash-due" style="color:#f08080">—</div><div class="anki-dash-lbl">Due today</div></div>
+        <div class="anki-dash-cell"><div class="anki-dash-num" id="dash-known" style="color:#a0e896">—</div><div class="anki-dash-lbl">Known</div></div>
+      </div>
+      <div class="anki-dash-bar-wrap"><div class="anki-dash-bar" id="dash-bar" style="width:0%"></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="anki-streak" id="dash-streak">🔥 Streak: <strong id="dash-streak-num">0</strong> days</div>
+        <div class="anki-dash-bar-label" id="dash-bar-label"></div>
+      </div>
+    </div>
     <div class="mode-grid">
       <div class="mode-card active" data-mode="mcq"><div class="mode-icon">🎭</div><div class="mode-title">Who said it?</div><div class="mode-desc">Pick the speaker</div></div>
       <div class="mode-card" data-mode="theme"><div class="mode-icon">🏷</div><div class="mode-title">What theme?</div><div class="mode-desc">Match to a theme</div></div>
@@ -164,27 +207,32 @@
     <div class="anki-topbar">
       <button class="btn" id="anki-back-btn">← Back</button>
       <div class="anki-progress-wrap">
-        <div class="anki-stat" id="anki-again-count">🔴 <span>0</span></div>
-        <div class="anki-stat" id="anki-hard-count">🟡 <span>0</span></div>
-        <div class="anki-stat" id="anki-good-count">🟢 <span>0</span></div>
-        <div class="anki-stat" id="anki-easy-count">⭐ <span>0</span></div>
+        <div class="anki-stat">🔴 <span id="ac-again">0</span></div>
+        <div class="anki-stat">🟡 <span id="ac-hard">0</span></div>
+        <div class="anki-stat">🟢 <span id="ac-good">0</span></div>
+        <div class="anki-stat">⭐ <span id="ac-easy">0</span></div>
       </div>
       <div class="anki-stat" id="anki-remain"></div>
     </div>
 
-    <div class="anki-card-wrap">
-      <div class="anki-card" id="anki-card">
-        <div class="anki-front" id="anki-front">
-          <div class="anki-badge" id="anki-badge"></div>
-          <div class="anki-quote" id="anki-quote"></div>
-          <div class="anki-tap-hint">Tap to reveal</div>
+    <div class="anki-prog-bar-wrap"><div class="anki-prog-bar" id="anki-prog-bar" style="width:0%"></div></div>
+
+    <div class="anki-card-wrap" id="anki-card-wrap">
+      <div class="anki-card-inner" id="anki-card-inner">
+        <!-- FRONT -->
+        <div class="anki-face anki-front-face" id="anki-front">
+          <div class="anki-badge" id="anki-badge-front"></div>
+          <div class="anki-quote" id="anki-quote-front"></div>
+          <div class="anki-tap-hint" id="anki-tap-hint">Tap card to reveal ↓</div>
         </div>
-        <div class="anki-back" id="anki-back" style="display:none">
+        <!-- BACK -->
+        <div class="anki-face anki-back-face" id="anki-back" style="display:none">
           <div class="anki-badge" id="anki-badge-back"></div>
           <div class="anki-quote" id="anki-quote-back"></div>
           <div class="anki-reveal-info">
             <div class="anki-info-row"><span class="anki-info-label">Speaker</span><span class="anki-info-val" id="anki-speaker"></span></div>
-            <div class="anki-info-row"><span class="anki-info-label">Act</span><span class="anki-info-val" id="anki-act"></span></div>
+            <div class="anki-info-row"><span class="anki-info-label">Act</span><span class="anki-info-val" id="anki-act-val"></span></div>
+            <div class="anki-info-row" id="anki-interval-row" style="display:none"><span class="anki-info-label">Last seen</span><span class="anki-info-val" id="anki-last-seen"></span></div>
             <div class="anki-divider"></div>
             <div class="anki-meaning" id="anki-meaning"></div>
           </div>
@@ -192,22 +240,24 @@
       </div>
     </div>
 
+    <div class="anki-hint-flip" id="anki-hint-flip" style="display:none">How well did you know it?</div>
+
     <div class="anki-buttons" id="anki-buttons" style="display:none">
-      <button class="anki-btn anki-again" id="btn-again">Again<span>forgot it</span></button>
-      <button class="anki-btn anki-hard" id="btn-hard">Hard<span>struggled</span></button>
-      <button class="anki-btn anki-good" id="btn-good">Good<span>got it</span></button>
-      <button class="anki-btn anki-easy" id="btn-easy">Easy<span>knew it</span></button>
+      <button class="anki-btn anki-again" id="btn-again">Again<span class="sub">forgot it</span><span class="due" id="due-again"></span></button>
+      <button class="anki-btn anki-hard" id="btn-hard">Hard<span class="sub">struggled</span><span class="due" id="due-hard"></span></button>
+      <button class="anki-btn anki-good" id="btn-good">Good<span class="sub">got it</span><span class="due" id="due-good"></span></button>
+      <button class="anki-btn anki-easy" id="btn-easy">Easy<span class="sub">knew it</span><span class="due" id="due-easy"></span></button>
     </div>
 
     <div id="anki-done" style="display:none">
       <div class="end-card">
-        <div style="font-size:48px;margin-bottom:1rem">🏆</div>
+        <div style="font-size:48px;margin-bottom:1rem" id="anki-done-emoji">🏆</div>
         <div class="end-score" id="anki-final-score"></div>
         <div class="end-label" style="margin-top:6px" id="anki-final-label"></div>
         <div class="anki-summary" id="anki-summary"></div>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:1.5rem">
-          <button class="btn btn-primary" id="anki-retry-btn">Review Again →</button>
-          <button class="btn" id="anki-retry-hard-btn">Review Hard Only →</button>
+          <button class="btn btn-primary" id="anki-retry-btn">Study All Again →</button>
+          <button class="btn" id="anki-retry-hard-btn">Review Weak Cards →</button>
           <button class="btn" id="anki-home-btn">← Home</button>
         </div>
       </div>
@@ -552,20 +602,125 @@ document.getElementById('back-browse-btn').addEventListener('click',()=>{
   document.getElementById('home-screen').style.display='block';
 });
 
-// ── ANKI ──
+// ══════════════════════════════════════════
+// ANKI — Spaced Repetition with localStorage
+// ══════════════════════════════════════════
+
+const STORAGE_KEY = 'macbeth_anki_v2';
+const TODAY = new Date().toISOString().slice(0,10);
+
+// SM-2 simplified intervals (days)
+const INTERVALS = {again:0, hard:1, good:3, easy:7};
+const INTERVAL_LABEL = {again:'Now', hard:'1 day', good:'3 days', easy:'7 days'};
+
+// Card state shape: {interval, due, easeFactor, reps, lastRated}
+function loadProgress(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function saveProgress(p){ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
+
+function getCardKey(q){ return q.t+'::'+q.act+'::'+q.q.slice(0,30); }
+
+function getCardState(progress, q){
+  return progress[getCardKey(q)] || {interval:0, due:TODAY, easeFactor:2.5, reps:0, lastRated:null};
+}
+
+function nextInterval(state, rating){
+  // SM-2 simplified
+  const ef = rating==='again'?Math.max(1.3,state.easeFactor-0.2)
+           : rating==='hard'?Math.max(1.3,state.easeFactor-0.15)
+           : rating==='good'?state.easeFactor
+           : Math.min(3.0,state.easeFactor+0.15);
+  let interval;
+  if(rating==='again') interval=0;
+  else if(rating==='hard') interval=Math.max(1, Math.round((state.interval||1)*0.8));
+  else if(rating==='good') interval=state.reps===0?1:state.reps===1?3:Math.round((state.interval||1)*ef);
+  else interval=state.reps===0?4:Math.round((state.interval||1)*ef*1.3);
+  interval=Math.min(interval,90);
+  const dueDate=new Date();
+  dueDate.setDate(dueDate.getDate()+interval);
+  return {interval, due:dueDate.toISOString().slice(0,10), easeFactor:ef, reps:state.reps+1, lastRated:TODAY};
+}
+
+function daysBetween(d1,d2){
+  return Math.round((new Date(d1)-new Date(d2))/(1000*60*60*24));
+}
+
+function updateDashboard(){
+  const progress=loadProgress();
+  const all=QUOTES_FILTERED;
+  let newCards=0,learning=0,due=0,known=0;
+  all.forEach(q=>{
+    const k=getCardKey(q);
+    if(!progress[k]){newCards++;return;}
+    const st=progress[k];
+    if(st.interval===0){learning++;return;}
+    if(st.due<=TODAY){due++;return;}
+    if(st.interval>=7){known++;return;}
+    learning++;
+  });
+  document.getElementById('dash-new').textContent=newCards;
+  document.getElementById('dash-learning').textContent=learning;
+  document.getElementById('dash-due').textContent=due>0?due+'':'0';
+  document.getElementById('dash-known').textContent=known;
+  const total=all.length;
+  const pct=Math.round((known/total)*100);
+  document.getElementById('dash-bar').style.width=pct+'%';
+  document.getElementById('dash-bar-label').textContent=pct+'% mastered';
+  // due badge on flashcard mode card
+  const dueBadge=document.getElementById('anki-due-badge');
+  if(dueBadge) dueBadge.textContent=(due+learning)>0?(due+learning)+' due':'';
+  // streak
+  const streakData=JSON.parse(localStorage.getItem('macbeth_streak')||'{"streak":0,"last":""}');
+  document.getElementById('dash-streak-num').textContent=streakData.streak;
+  // flashcard start btn label
+  const dueTotal=due+learning+newCards;
+  document.getElementById('start-btn').textContent=dueTotal>0?'Start Session ('+dueTotal+' cards) →':'Start Quiz →';
+}
+
+function updateStreak(){
+  let s=JSON.parse(localStorage.getItem('macbeth_streak')||'{"streak":0,"last":""}');
+  if(s.last===TODAY) return;
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  const yStr=yesterday.toISOString().slice(0,10);
+  s.streak=(s.last===yStr)?s.streak+1:1;
+  s.last=TODAY;
+  localStorage.setItem('macbeth_streak',JSON.stringify(s));
+}
+
+// Build today's deck: due + new cards (max 20 new)
+function buildAnkiDeck(pool){
+  const progress=loadProgress();
+  const due=[], fresh=[];
+  pool.forEach(q=>{
+    const st=progress[getCardKey(q)];
+    if(!st){ fresh.push(q); return; }
+    if(st.due<=TODAY) due.push(q);
+  });
+  return shuffle(due).concat(shuffle(fresh).slice(0,Math.max(5,20-due.length)));
+}
+
 let ankiDeck=[], ankiIndex=0, ankiRevealed=false;
 let ankiCounts={again:0,hard:0,good:0,easy:0};
 let ankiHardQueue=[];
+let ankiProgress={};
 
 function startAnki(deckOverride){
-  const pool = deckOverride || shuffle(getPool());
+  ankiProgress=loadProgress();
+  const pool=deckOverride||buildAnkiDeck(getPool());
+  if(!pool.length){
+    alert('Nothing due right now! Come back later or use "Study All" to review everything.');
+    return;
+  }
   ankiDeck=pool; ankiIndex=0; ankiRevealed=false;
   ankiCounts={again:0,hard:0,good:0,easy:0}; ankiHardQueue=[];
   document.getElementById('home-screen').style.display='none';
   document.getElementById('anki-screen').style.display='block';
   document.getElementById('anki-done').style.display='none';
-  document.getElementById('anki-card').style.display='block';
+  document.getElementById('anki-card-wrap').style.display='block';
   document.getElementById('anki-buttons').style.display='none';
+  document.getElementById('anki-hint-flip').style.display='none';
   updateAnkiCounters();
   showAnkiCard();
 }
@@ -573,42 +728,72 @@ function startAnki(deckOverride){
 function showAnkiCard(){
   if(ankiIndex>=ankiDeck.length){showAnkiDone();return;}
   const q=ankiDeck[ankiIndex]; ankiRevealed=false;
-  document.getElementById('anki-remain').textContent=(ankiDeck.length-ankiIndex)+' left';
-  document.getElementById('anki-badge').textContent=tLabel(q.t)+' · '+q.act;
-  document.getElementById('anki-quote').textContent=q.q;
+  const remaining=ankiDeck.length-ankiIndex;
+  document.getElementById('anki-remain').textContent=remaining+' left';
+  document.getElementById('anki-prog-bar').style.width=(((ankiIndex)/ankiDeck.length)*100)+'%';
+
+  // Front
+  document.getElementById('anki-badge-front').textContent=tLabel(q.t)+' · '+q.act;
+  document.getElementById('anki-quote-front').textContent=q.q;
+  // Back
   document.getElementById('anki-badge-back').textContent=tLabel(q.t)+' · '+q.act;
   document.getElementById('anki-quote-back').textContent=q.q;
   document.getElementById('anki-speaker').textContent=q.s;
-  document.getElementById('anki-act').textContent='Act '+q.act;
+  document.getElementById('anki-act-val').textContent='Act '+q.act;
   document.getElementById('anki-meaning').textContent=q.m;
-  document.getElementById('anki-front').style.display='block';
+
+  // Last seen info
+  const st=getCardState(ankiProgress,q);
+  const lsRow=document.getElementById('anki-interval-row');
+  if(st.lastRated){
+    lsRow.style.display='flex';
+    const days=daysBetween(TODAY,st.lastRated);
+    document.getElementById('anki-last-seen').textContent=days===0?'Today':days===1?'Yesterday':days+' days ago';
+  } else { lsRow.style.display='none'; }
+
+  // Due labels on buttons
+  document.getElementById('due-again').textContent=INTERVAL_LABEL.again;
+  document.getElementById('due-hard').textContent=INTERVAL_LABEL.hard;
+  document.getElementById('due-good').textContent=INTERVAL_LABEL.good;
+  document.getElementById('due-easy').textContent=INTERVAL_LABEL.easy;
+
+  // Reset - show front, hide back
+  document.getElementById('anki-front').style.display='flex';
   document.getElementById('anki-back').style.display='none';
+  document.getElementById('anki-tap-hint').style.display='block';
   document.getElementById('anki-buttons').style.display='none';
-  document.getElementById('anki-tap-hint') && (document.querySelector('.anki-tap-hint').style.display='block');
+  document.getElementById('anki-hint-flip').style.display='none';
 }
 
-document.getElementById('anki-card').addEventListener('click',()=>{
+document.getElementById('anki-card-inner').addEventListener('click',()=>{
   if(ankiRevealed)return;
   ankiRevealed=true;
   document.getElementById('anki-front').style.display='none';
-  document.getElementById('anki-back').style.display='block';
+  document.getElementById('anki-back').style.display='flex';
+  document.getElementById('anki-tap-hint').style.display='none';
   document.getElementById('anki-buttons').style.display='grid';
+  document.getElementById('anki-hint-flip').style.display='block';
 });
 
 function rateAnki(rating){
   const q=ankiDeck[ankiIndex];
   ankiCounts[rating]++;
   if(rating==='again'||rating==='hard') ankiHardQueue.push(q);
+  // Save to localStorage
+  const key=getCardKey(q);
+  const st=getCardState(ankiProgress,q);
+  ankiProgress[key]=nextInterval(st,rating);
+  saveProgress(ankiProgress);
   ankiIndex++;
   updateAnkiCounters();
   showAnkiCard();
 }
 
 function updateAnkiCounters(){
-  document.querySelector('#anki-again-count span').textContent=ankiCounts.again;
-  document.querySelector('#anki-hard-count span').textContent=ankiCounts.hard;
-  document.querySelector('#anki-good-count span').textContent=ankiCounts.good;
-  document.querySelector('#anki-easy-count span').textContent=ankiCounts.easy;
+  document.getElementById('ac-again').textContent=ankiCounts.again;
+  document.getElementById('ac-hard').textContent=ankiCounts.hard;
+  document.getElementById('ac-good').textContent=ankiCounts.good;
+  document.getElementById('ac-easy').textContent=ankiCounts.easy;
 }
 
 document.getElementById('btn-again').addEventListener('click',()=>rateAnki('again'));
@@ -617,20 +802,25 @@ document.getElementById('btn-good').addEventListener('click',()=>rateAnki('good'
 document.getElementById('btn-easy').addEventListener('click',()=>rateAnki('easy'));
 
 function showAnkiDone(){
-  document.getElementById('anki-card').style.display='none';
+  updateStreak();
+  document.getElementById('anki-card-wrap').style.display='none';
   document.getElementById('anki-buttons').style.display='none';
+  document.getElementById('anki-hint-flip').style.display='none';
   document.getElementById('anki-done').style.display='block';
   const total=ankiDeck.length;
   const known=ankiCounts.good+ankiCounts.easy;
   const pct=Math.round((known/total)*100);
   document.getElementById('anki-final-score').textContent=known+'/'+total;
-  document.getElementById('anki-final-label').textContent=pct+'% known';
+  document.getElementById('anki-final-label').textContent=pct+'% rated good or better';
+  const emoji=pct>=90?'🏆':pct>=70?'⭐':pct>=50?'📚':'🗡️';
+  document.getElementById('anki-done-emoji').textContent=emoji;
   document.getElementById('anki-summary').innerHTML=`
     <div class="anki-sum-box"><div class="anki-sum-num" style="color:#f08080">${ankiCounts.again}</div><div class="anki-sum-lbl">Again</div></div>
     <div class="anki-sum-box"><div class="anki-sum-num" style="color:#e0a030">${ankiCounts.hard}</div><div class="anki-sum-lbl">Hard</div></div>
     <div class="anki-sum-box"><div class="anki-sum-num" style="color:#a0e896">${ankiCounts.good}</div><div class="anki-sum-lbl">Good</div></div>
     <div class="anki-sum-box"><div class="anki-sum-num" style="color:var(--gold)">${ankiCounts.easy}</div><div class="anki-sum-lbl">Easy</div></div>
   `;
+  document.getElementById('anki-prog-bar').style.width='100%';
 }
 
 document.getElementById('anki-retry-btn').addEventListener('click',()=>{
@@ -638,18 +828,28 @@ document.getElementById('anki-retry-btn').addEventListener('click',()=>{
   startAnki(shuffle(getPool()));
 });
 document.getElementById('anki-retry-hard-btn').addEventListener('click',()=>{
-  if(!ankiHardQueue.length){alert('No hard cards to review!');return;}
+  if(!ankiHardQueue.length){alert('No weak cards this session!');return;}
   document.getElementById('anki-done').style.display='none';
   startAnki(shuffle(ankiHardQueue));
 });
-document.getElementById('anki-home-btn').addEventListener('click',()=>{
+function goAnkiHome(){
   document.getElementById('anki-screen').style.display='none';
   document.getElementById('home-screen').style.display='block';
+  updateDashboard();
+}
+document.getElementById('anki-home-btn').addEventListener('click',goAnkiHome);
+document.getElementById('anki-back-btn').addEventListener('click',goAnkiHome);
+
+document.getElementById('reset-progress-btn').addEventListener('click',()=>{
+  if(confirm('Reset all flashcard progress? This cannot be undone.')){
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('macbeth_streak');
+    updateDashboard();
+  }
 });
-document.getElementById('anki-back-btn').addEventListener('click',()=>{
-  document.getElementById('anki-screen').style.display='none';
-  document.getElementById('home-screen').style.display='block';
-});
+
+// Init dashboard on load
+updateDashboard();
 </script>
 </body>
 </html>
