@@ -1,49 +1,842 @@
-<!doctype html>
+ <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>oxdhrwqn project</title>
-  <style>
-    :root {
-      --bg1: #f5f7ff;
-      --bg2: #e8fff4;
-      --ink: #15202b;
-      --card: #ffffffcc;
-      --accent: #0f766e;
-    }
-    body {
-      margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      color: var(--ink);
-      min-height: 100vh;
-      background: radial-gradient(circle at 15% 20%, var(--bg2), transparent 45%),
-                  radial-gradient(circle at 85% 15%, #fff7e6, transparent 35%),
-                  linear-gradient(135deg, var(--bg1), #ffffff);
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      box-sizing: border-box;
-    }
-    .card {
-      max-width: 720px;
-      width: 100%;
-      background: var(--card);
-      border: 1px solid #d9e2ec;
-      border-radius: 18px;
-      padding: 28px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    }
-    h1 { margin-top: 0; font-size: clamp(1.8rem, 4vw, 2.8rem); }
-    p { line-height: 1.65; font-size: 1.05rem; }
-    a { color: var(--accent); }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macbeth Quotes Game</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f0d0a;
+            --surface: #1a1713;
+            --surface2: #22201a;
+            --border: rgba(255, 255, 255, 0.08);
+            --gold: #c9a84c;
+            --gold-dim: rgba(201, 168, 76, 0.15);
+            --text: #e8e0d0;
+            --text-dim: #7a7060;
+            --text-mid: #a89880;
+            --green-bright: #4a9e40;
+            --red-bright: #c0392b;
+            --radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 720px;
+        }
+
+        .site-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .site-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--gold);
+            letter-spacing: 0.02em;
+        }
+
+        .site-header p {
+            color: var(--text-dim);
+            font-size: 14px;
+            margin-top: 6px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .tab-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 6px 14px;
+            border-radius: 99px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-dim);
+            font-size: 12px;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .tab.active {
+            background: var(--gold-dim);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .mode-card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            cursor: pointer;
+            background: var(--surface);
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .mode-card:hover {
+            border-color: var(--gold);
+        }
+
+        .mode-card.active {
+            border-color: var(--gold);
+            background: var(--gold-dim);
+        }
+
+        .mode-icon {
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
+
+        .mode-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 3px;
+        }
+
+        .mode-desc {
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .score-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .score-pill {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 8px 16px;
+            font-size: 13px;
+            color: var(--text-dim);
+            white-space: nowrap;
+        }
+
+        .score-pill span {
+            font-weight: 500;
+            color: var(--gold);
+        }
+
+        .progress-bar-wrap {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 99px;
+            overflow: hidden;
+            height: 6px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--gold);
+            border-radius: 99px;
+            transition: width 0.4s ease;
+        }
+
+        .quiz-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .theme-badge {
+            display: inline-block;
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 99px;
+            background: var(--gold-dim);
+            color: var(--gold);
+            margin-bottom: 14px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .quote-text {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(14px, 2.5vw, 17px);
+            line-height: 1.75;
+            color: var(--text);
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+        .quote-text::before {
+            content: '\201C';
+            color: var(--gold);
+            font-size: 1.3em;
+            line-height: 0;
+            vertical-align: -0.3em;
+            margin-right: 2px;
+        }
+
+        .quote-text::after {
+            content: '\201D';
+            color: var(--gold);
+            font-size: 1.3em;
+            line-height: 0;
+            vertical-align: -0.3em;
+            margin-left: 2px;
+        }
+
+        .speaker-line {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-bottom: 1.5rem;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .opt-btn {
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 13px;
+            line-height: 1.4;
+            cursor: pointer;
+            background: var(--surface2);
+            color: var(--text);
+            text-align: left;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+        }
+
+        .opt-btn:hover:not(:disabled) {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .opt-btn.correct {
+            background: rgba(45, 90, 39, 0.4);
+            border-color: var(--green-bright);
+            color: #a0e896;
+        }
+
+        .opt-btn.wrong {
+            background: rgba(139, 26, 26, 0.4);
+            border-color: var(--red-bright);
+            color: #f08080;
+        }
+
+        .opt-btn:disabled {
+            cursor: default;
+        }
+
+        .meaning-box {
+            display: none;
+            background: var(--surface2);
+            border-left: 3px solid var(--gold);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .meaning-label {
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .meaning-text {
+            font-size: 14px;
+            color: var(--text-mid);
+            line-height: 1.65;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            cursor: pointer;
+            background: var(--surface2);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+        }
+
+        .btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: #0f0d0a;
+            border-color: var(--gold);
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background: #e0b955;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .browse-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: border-color 0.15s;
+        }
+
+        .browse-card:hover {
+            border-color: rgba(201, 168, 76, 0.4);
+        }
+
+        .browse-quote {
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            font-style: italic;
+            line-height: 1.65;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .browse-meta {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .browse-meaning {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--text-mid);
+            line-height: 1.65;
+        }
+
+        .browse-card.open .browse-meaning {
+            display: block;
+        }
+
+        .browse-card.open {
+            border-color: rgba(201, 168, 76, 0.5);
+        }
+
+        .end-card {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .end-score {
+            font-family: 'Playfair Display', serif;
+            font-size: 72px;
+            color: var(--gold);
+            line-height: 1;
+        }
+
+        .end-label {
+            font-size: 14px;
+            color: var(--text-dim);
+            margin-bottom: 1.5rem;
+        }
+
+        .end-msg {
+            font-size: 16px;
+            color: var(--text);
+            margin-bottom: 2rem;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+        }
+
+        #start-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .feedback-correct {
+            color: #a0e896;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .feedback-wrong {
+            color: #f08080;
+            font-size: 14px;
+        }
+
+        .count-badge {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        @media(max-width:480px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+
+            .mode-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <main class="card">
-    <h1>My GitHub Pages Site</h1>
-    <p>This site is published from the <strong>oxdhrwqn-project</strong> repository.</p>
-    <p>If you can read this page, GitHub Pages is working.</p>
-  </main>
+    <div class="container">
+        <header class="site-header">
+            <h1>Macbeth</h1>
+            <p>Leaving Cert English — Quotes Game</p>
+        </header>
+
+        <div id="home-screen">
+            <div class="mode-grid">
+                <div class="mode-card active" data-mode="mcq">
+                    <div class="mode-icon">🎭</div>
+                    <div class="mode-title">Who said it?</div>
+                    <div class="mode-desc">Pick the speaker</div>
+                </div>
+                <div class="mode-card" data-mode="theme">
+                    <div class="mode-icon">🏷</div>
+                    <div class="mode-title">What theme?</div>
+                    <div class="mode-desc">Match to a theme</div>
+                </div>
+                <div class="mode-card" data-mode="browse">
+                    <div class="mode-icon">📖</div>
+                    <div class="mode-title">Study cards</div>
+                    <div class="mode-desc">Browse &amp; learn</div>
+                </div>
+            </div>
+            <div class="tab-row" id="filter-tabs">
+                <button class="tab active" data-theme="all">All themes</button>
+                <button class="tab" data-theme="Ambition">Ambition &amp; Power</button>
+                <button class="tab" data-theme="Nature">Nature</button>
+                <button class="tab" data-theme="Appearance">Appearance</button>
+                <button class="tab" data-theme="Violence">Violence</button>
+                <button class="tab" data-theme="Guilt">Guilt</button>
+                <button class="tab" data-theme="Deception">Deception</button>
+                <button class="tab" data-theme="Masculinity">Masculinity</button>
+                <button class="tab" data-theme="Kingship">Kingship</button>
+                <button class="tab" data-theme="Scotland">Scotland</button>
+                <button class="tab" data-theme="Blood">Blood imagery</button>
+                <button class="tab" data-theme="Light">Light &amp; Dark</button>
+                <button class="tab" data-theme="Sleep">Sleep imagery</button>
+                <button class="tab" data-theme="Children">Children imagery</button>
+                <button class="tab" data-theme="Clothing">Clothing imagery</button>
+                <button class="tab" data-theme="Character">Character quotes</button>
+            </div>
+            <button class="btn btn-primary" id="start-btn">Start Quiz →</button>
+        </div>
+
+        <div id="quiz-screen" style="display:none">
+            <div class="score-bar">
+                <div class="score-pill">Score <span id="score-num">0</span></div>
+                <div class="score-pill">Q <span id="q-num">1</span>/<span id="q-total">10</span></div>
+                <div class="progress-bar-wrap">
+                    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+                </div>
+            </div>
+            <div id="game-area"></div>
+        </div>
+
+        <div id="browse-screen" style="display:none">
+            <div class="tab-row" id="browse-filter"></div>
+            <div class="count-badge" id="browse-count"></div>
+            <div id="browse-area"></div>
+            <button class="btn" id="back-browse-btn" style="margin-top:1rem">← Back</button>
+        </div>
+    </div>
+
+    <script>
+        const QUOTES = [
+
+            // ── AMBITION & POWER ──
+            { q: "To me you speak not. If you can look into the seeds of time, and say which grain will grow and which will not, speak then to me, who neither beg nor fear your favors nor your hate.", s: "Banquo", act: "1.3", t: "Ambition", m: "Banquo challenges the witches to prophesy for him — but unlike Macbeth, he neither begs for good news nor fears bad. He approaches the supernatural with calm detachment, showing the moral clarity Macbeth lacks." },
+            { q: "My thought, whose murder yet is but fantastical, shakes so my single state of man that function is smother'd in surmise, and nothing is but what is not.", s: "Macbeth", act: "1.3", t: "Ambition", m: "Macbeth is already fantasising about murder seconds after the prophecy. His ambition terrifies even himself — imagination is overwhelming reason and paralysing him entirely." },
+            { q: "The Prince of Cumberland! That is a step on which I must fall down, or else o'erleap, for in my way it lies. Stars, hide your fires; let not light see my black and deep desires. The eye wink at the hand; yet let that be which the eye fears, when it is done, to see.", s: "Macbeth", act: "1.4", t: "Ambition", m: "Malcolm's appointment as heir blocks Macbeth's path. He asks for darkness to hide his murderous thoughts — he knows they're wrong but is already committed. The 'eye winking at the hand' means letting murder happen without looking." },
+            { q: "Glamis thou art, and Cawdor; and shalt be what thou art promised: yet do I fear thy nature; It is too full o' the milk of human kindness to catch the nearest way: thou wouldst be great; art not without ambition, but without the illness should attend it.", s: "Lady Macbeth", act: "1.5", t: "Ambition", m: "Lady Macbeth fears Macbeth is too kind and moral to commit murder. She sees his goodness as weakness — he has ambition but lacks the moral ruthlessness ('illness') needed to act on it. She decides she must drive him." },
+            { q: "I have no spur to prick the sides of my intent, but only vaulting ambition, which o'erleaps itself and falls on the other.", s: "Macbeth", act: "1.7", t: "Ambition", m: "Macbeth admits the only reason to kill Duncan is ambition — no other justification exists. Using a horse-riding metaphor, he foreshadows his own downfall: ambition that overreaches causes a fall." },
+            { q: "'Gainst nature still! Thriftless ambition, that wilt ravin up thine own life's means! Then 'tis most like the sovereignty will fall upon Macbeth.", s: "Ross", act: "2.4", t: "Ambition", m: "Ross describes ambition as self-devouring — like an animal eating its own means of survival. 'Thriftless' means wasteful: Macbeth's ambition destroys the very things it sought to gain." },
+            { q: "Thou hast it now: King, Cawdor, Glamis, all, As the weird women promised, and I fear thou play'dst most foully for't.", s: "Banquo", act: "3.1", t: "Ambition", m: "Banquo suspects Macbeth cheated to fulfil the prophecy. Unlike Macbeth, Banquo resists acting on the witches' predictions — he represents the moral alternative Macbeth chose not to take." },
+            { q: "Yet it was said it should not stand in thy posterity, but that myself should be the root and father of many kings.", s: "Banquo", act: "3.1", t: "Ambition", m: "Banquo reflects on the witches' promise that his descendants will be kings even if he won't. This gives him hope but makes him a threat to Macbeth — who murdered for a legacy he cannot secure." },
+            { q: "For mine own good all causes shall give way. I am in blood stepp'd in so far that, should I wade no more, returning were as tedious as go o'er.", s: "Macbeth", act: "3.4", t: "Ambition", m: "Macbeth commits fully to his violent path — he has waded so deep in blood that going back is as hard as pressing forward. He abandons all moral consideration, acting now purely for self-preservation." },
+            { q: "She should have died hereafter; There would have been a time for such a word. To morrow, and to-morrow, and to-morrow, creeps in this petty pace from day to day, to the last syllable of recorded time; and all our yesterdays have lighted fools the way to dusty death. Out, out, brief candle! Life's but a walking shadow, a poor player that struts and frets his hour upon the stage and then is heard no more: it is a tale told by an idiot, full of sound and fury, signifying nothing.", s: "Macbeth", act: "5.5", t: "Ambition", m: "On hearing of Lady Macbeth's death, Macbeth delivers a nihilistic soliloquy. Life has become meaningless — all his ambition has led only to emptiness and despair. One of Shakespeare's greatest speeches on the futility of existence." },
+            { q: "Either thou, Macbeth, or else my sword, with an unbatter'd edge, I sheathe again undeeded.", s: "Macduff", act: "5.8", t: "Ambition", m: "Macduff vows to kill Macbeth or die trying. 'Undeeded' means without a deed accomplished — he will not rest until justice is served. Vengeance and justice drive him where ambition drove Macbeth." },
+
+            // ── NATURE ──
+            { q: "Fair is foul and foul is fair.", s: "Witches", act: "1.1", t: "Nature", m: "The witches establish the play's central paradox — things are never what they seem. Good and evil, truth and lies, reality and illusion are all inverted. This sets the moral chaos that will consume Scotland." },
+            { q: "Look like th'innocent flower, but be the serpent under't.", s: "Lady Macbeth", act: "1.5", t: "Nature", m: "Lady Macbeth instructs Macbeth to hide murderous intentions behind a pleasant exterior. The Eden imagery (serpent, flower) links ambition and deception to original sin — the Fall of Man echoed in the fall of Scotland." },
+            { q: "Come, you spirits that tend on mortal thoughts, unsex me here and fill me from the crown to the toe topfull of direst cruelty.", s: "Lady Macbeth", act: "1.5", t: "Nature", m: "Lady Macbeth calls on supernatural forces to strip away her femininity and fill her with cruelty. She sees femininity as weakness — she must become 'unnatural' to commit violence. Her invocation mirrors the witches' dark power." },
+            { q: "Where they most breed and haunt, I have observed the air is delicate.", s: "Banquo", act: "1.6", t: "Nature", m: "Banquo praises the pleasant atmosphere around Macbeth's castle as martlets (birds of good omen) nest there. Deeply ironic — the beautiful, natural setting conceals the violence about to unfold inside." },
+            { q: "There's husbandry in heaven, their candles are all out.", s: "Banquo", act: "2.1", t: "Nature", m: "Banquo notes the stars are hidden — as if heaven is being economical with its light. The darkness on the night of Duncan's murder is a natural omen. Heaven itself seems to be withdrawing from what is about to happen." },
+            { q: "Macbeth does murder sleep.", s: "Macbeth", act: "2.2", t: "Nature", m: "By killing Duncan as he slept, Macbeth has destroyed his own ability to find peace. Sleep represents innocence and conscience — and by violating it, Macbeth has condemned himself to perpetual wakefulness and guilt." },
+            { q: "I heard the owl scream and the crickets cry.", s: "Lady Macbeth", act: "2.2", t: "Nature", m: "The owl's scream is a traditional death omen in folklore. Lady Macbeth hears nature responding to the murder — even as she tries to suppress her own feelings, the natural world reacts to the crime being committed above." },
+            { q: "It was the owl that shrieked.", s: "Lady Macbeth", act: "2.2", t: "Nature", m: "Lady Macbeth identifies the owl's shriek as the signal that the murder is happening. The owl — traditionally an omen of death — marks the moment regicide is committed. Nature announces what human guilt will spend the rest of the play hiding." },
+            { q: "His gashed stabs looked like a breach in nature.", s: "Macbeth", act: "2.3", t: "Nature", m: "Duncan's wounds are described as a rupture in nature itself — killing a king is not just a crime but a violation of the natural order. The divine right of kings made regicide feel like tearing the fabric of the world apart." },
+            { q: "The night has been unruly. Where we lay, our chimneys were blown down and, as they say, lamentings heard i' th' air, strange screams of death, and prophesying with accents terrible of dire combustion and confused events, new hatched to the woeful time.", s: "Lennox", act: "2.3", t: "Nature", m: "Lennox describes a night of supernatural disturbance coinciding with Duncan's murder — storms, screams, prophecies. Nature convulses in response to regicide. The physical world mirrors the moral catastrophe just committed." },
+            { q: "'Twas a rough night.", s: "Macbeth", act: "2.3", t: "Nature", m: "Macbeth's darkly ironic understatement after Lennox's vivid account of the terrible night. One of the play's most chilling lines — he knows exactly why the night was 'rough' while everyone else remains ignorant." },
+            { q: "Tis said, they eat each other.", s: "Old Man", act: "2.4", t: "Nature", m: "The Old Man reports Duncan's horses turned wild and ate each other — an unnatural act mirroring the unnatural regicide. Animals devouring each other echoes how Macbeth's ambition has devoured his own humanity." },
+            { q: "Gainst nature still.", s: "Ross", act: "2.4", t: "Nature", m: "Ross's repeated phrase emphasises that everything surrounding Duncan's murder violates natural order — the horses, the darkness, the political upheaval. 'Against nature' becomes a refrain condemning Macbeth's actions." },
+            { q: "Tis unnatural, even like the deed that's done.", s: "Old Man", act: "2.4", t: "Nature", m: "The Old Man directly equates the supernatural disturbances with the murder. Nature itself is reacting — the unnatural deed produces unnatural effects throughout Scotland's environment." },
+
+            // ── APPEARANCE ──
+            { q: "Fair is foul, and foul is fair. Hover through the fog and filthy air.", s: "Witches", act: "1.1", t: "Appearance", m: "The witches immediately establish that appearances are deceptive in this world. 'Fog and filthy air' creates an atmosphere of obscured reality — nothing will be clearly seen or easily judged throughout the play." },
+            { q: "Oftentimes, to win us to our harm, the instruments of darkness tell us truths, win us with honest trifles, to betray's in deepest consequence.", s: "Banquo", act: "1.3", t: "Appearance", m: "Banquo warns that evil forces use small truths to lure people toward greater destruction. He correctly identifies the witches' dangerous game — they tell partial truths leading to catastrophic choices. Macbeth ignores this entirely." },
+            { q: "So foul and fair a day I have not seen.", s: "Macbeth", act: "1.3", t: "Appearance", m: "Macbeth's first words echo the witches unknowingly — immediately linking him to them. The battle was victorious (fair) but the weather terrible (foul). It foreshadows how his great fortune will also be accompanied by darkness." },
+            { q: "There's no art to find the mind's construction in the face: He was a gentleman on whom I built an absolute trust.", s: "Duncan", act: "1.4", t: "Appearance", m: "Duncan says this about the treacherous Thane of Cawdor — just before he meets Macbeth, the next traitor. His tragic inability to read people's true intentions from their faces is precisely the flaw that will get him killed." },
+            { q: "Your face, my Thane, is as a book where men may read strange matters. To beguile the time, look like the time; bear welcome in your eye, your hand, your tongue; look like the innocent flower, but be the serpent under it.", s: "Lady Macbeth", act: "1.5", t: "Appearance", m: "Lady Macbeth tells Macbeth his face betrays his thoughts — he must learn to perform innocence. She coaches him in hypocrisy. The serpent/flower image is her central instruction: appear good, be evil." },
+            { q: "See, see, our honour'd hostess! The love that follows us sometime is our trouble, which still we thank as love. Fair and noble hostess, we are your guest to-night.", s: "Duncan", act: "1.6", t: "Appearance", m: "Duncan warmly greets Lady Macbeth with complete trust — even as she is planning his murder. His words ('fair and noble') are bitterly ironic given what we know. He cannot see past her hospitable performance." },
+            { q: "False face must hide what the false heart doth know.", s: "Macbeth", act: "1.7", t: "Appearance", m: "Macbeth resolves to appear innocent while harbouring murderous intent. He has internalised Lady Macbeth's lesson — deception is now his settled strategy. His face becomes a permanent mask." },
+            { q: "Is this a dagger which I see before me, the handle toward my hand? Come, let me clutch thee. I have thee not, and yet I see thee still. Art thou not, fatal vision, sensible to feeling as to sight? Or art thou but a dagger of the mind, a false creation, proceeding from the heat oppressed brain?", s: "Macbeth", act: "2.1", t: "Appearance", m: "Before the murder, Macbeth hallucinates a dagger. He questions whether it's real or a product of his overheated imagination. Appearances and reality are already collapsing for him — his guilt is generating visions before the crime even happens." },
+            { q: "Malcolm and Donalbain, the King's two sons, are stol'n away and fled, which puts upon them suspicion of the deed.", s: "Macduff", act: "2.4", t: "Appearance", m: "The princes' flight makes them appear guilty. Deception has taken hold of all Scotland — the real killer (Macbeth) goes unsuspected while the innocent are blamed. Appearances now govern justice." },
+            { q: "Let your remembrance apply to Banquo; present him eminence, both with eye and tongue: unsafe the while, that we must lave our honours in these flattering streams, and make our faces vizards to our hearts.", s: "Macbeth", act: "3.2", t: "Appearance", m: "Macbeth instructs Lady Macbeth to flatter Banquo at the banquet — even as he arranges Banquo's murder. 'Vizards' means masks: their faces must permanently disguise their murderous intentions. Deception is now their way of life." },
+            { q: "O proper stuff! This is the very painting of your fear: this is the air-drawn dagger which, you said, led you to Duncan. O, these flaws and starts, impostors to true fear, would well become a woman's story at a winter's fire, authorized by her grandam. Shame itself! Why do you make such faces? When all's done, you look but on a stool.", s: "Lady Macbeth", act: "3.4", t: "Appearance", m: "Lady Macbeth dismisses Macbeth's vision of Banquo's ghost as an hallucination — a 'painting' of fear, not reality. Ironically she will later suffer her own hallucinations. Her contempt for his visions prefigures her own breakdown." },
+            { q: "Macbeth! Macbeth! Macbeth! Beware Macduff, Beware the Thane of Fife. Dismiss me. Enough.", s: "First Apparition", act: "4.1", t: "Appearance", m: "The armed head warns Macbeth about Macduff — appearing as a warning but functioning as a lure. The apparitions tell truths but frame them to mislead. Macbeth reads them as reassurance when they are in fact condemnations." },
+            { q: "Macbeth shall never vanquished be until Great Birnam Wood to high Dunsinane Hill shall come against him.", s: "Third Apparition", act: "4.1", t: "Appearance", m: "This prophecy seems to promise permanent safety — forests don't move. But when Malcolm's army cuts branches as camouflage, the wood 'comes' to Dunsinane. The witches' truth is technically accurate but designed to deceive." },
+            { q: "And be these juggling fiends no more believed, that palter with us in a double sense; that keep the word of promise to our ear, and break it to our hope.", s: "Macbeth", act: "5.8", t: "Appearance", m: "Finally Macbeth understands he has been deceived — the witches kept their 'word' technically while destroying its meaning. 'Juggling fiends' and 'palter' (to equivocate) reveal how appearances and language itself were weaponised against him." },
+
+            // ── VIOLENCE ──
+            { q: "What bloody man is that? He can report, as seemeth by his plight, of the revolt the newest state.", s: "Duncan", act: "1.2", t: "Violence", m: "Duncan's first words draw attention to a bloodied soldier — violence is immediately central to the world of the play. Ironically, Duncan will himself become a victim of the very violence he now receives reports about." },
+            { q: "For brave Macbeth — well he deserves that name — disdaining fortune, with his brandish'd steel, which smoked with bloody execution, like valour's minion carved out his passage till he faced the slave; which ne'er shook hands, nor bade farewell to him, Till he unseam'd him from the nave to the chaps, and fix'd his head upon our battlements.", s: "Captain", act: "1.2", t: "Violence", m: "The Captain's graphic account introduces Macbeth as a celebrated warrior. 'Unseam'd him from the nave to the chaps' — split from navel to jaw — is shockingly brutal. The same capacity for violence that makes him a hero will later make him a tyrant." },
+            { q: "I have given suck and know how tender 'tis to love the babe that milks me — I would, while it was smiling in my face, have pluck'd my nipple from his boneless gums and dash'd the brains out had I so sworn as you have done to this.", s: "Lady Macbeth", act: "1.7", t: "Violence", m: "Lady Macbeth uses a shocking image of infanticide to shame Macbeth into action. She would kill a nursing baby if she had sworn to — illustrating her terrifying moral extremism and absolute commitment to murder." },
+            { q: "The castle of Macduff I will surprise, seize upon Fife, give to the edge o' the sword his wife, his babes, and all unfortunate souls that trace him in his line.", s: "Macbeth", act: "4.1", t: "Violence", m: "Macbeth plans to massacre Macduff's entire family. This marks his full moral collapse — he now kills women and children with no strategic purpose whatsoever. The murders are pure tyrannical revenge." },
+            { q: "Each new morn new widows howl, new orphans cry.", s: "Macduff", act: "4.3", t: "Violence", m: "Macduff describes Scotland under Macbeth as a place of constant fresh grief — each day brings new widows and orphans. This accumulation of suffering shows how Macbeth's personal violence has scaled up into nationwide devastation." },
+
+            // ── CHARACTER: MACBETH ──
+            { q: "Brave Macbeth / Valour's minion.", s: "Captain", act: "1.2", t: "Character", m: "The Captain gives Macbeth two epithets at the play's outset: 'Brave Macbeth' and 'Valour's minion' (servant of valour). These glowing descriptions make his later tyranny all the more shocking — he was once Scotland's greatest hero." },
+            { q: "Valiant cousin / Noble Macbeth.", s: "Duncan", act: "1.2", t: "Character", m: "Duncan greets news of Macbeth's heroism with warmth and trust. 'Valiant cousin' and 'Noble Macbeth' — the man about to murder him is described with familial affection and admiration. Duncan's trust is his fatal flaw." },
+            { q: "Rapt withal.", s: "Banquo", act: "1.3", t: "Character", m: "Banquo observes Macbeth is 'rapt' (entranced) upon hearing the witches' prophecy. It's the first sign that Macbeth is immediately and dangerously captivated by the idea of kingship — while Banquo stays sceptical." },
+            { q: "I could not say 'Amen'.", s: "Macbeth", act: "2.2", t: "Character", m: "After the murder, Macbeth finds he cannot say 'Amen'. He has cut himself off from God — his guilt manifests as inability to access divine grace. The word physically 'sticks' in his throat, showing guilt as a bodily experience." },
+            { q: "Will all great Neptune's ocean wash this blood clean from my hand?", s: "Macbeth", act: "2.2", t: "Character", m: "Macbeth feels his guilt is so immense even all the world's oceans cannot cleanse him. Blood imagery conveys the permanence of moral corruption. This contrasts bitterly with Lady Macbeth's later 'Out, damned spot' — she dismissed his guilt, then suffers the same." },
+            { q: "To be thus is nothing but to be safely thus.", s: "Macbeth", act: "3.1", t: "Character", m: "Being king is worthless unless the position is secure. Macbeth realises power without safety is meaningless — this drives him to order Banquo's murder, deepening the tyranny he thought would protect him." },
+            { q: "Restless ecstasy.", s: "Macbeth", act: "3.2", t: "Character", m: "Macbeth describes his torment as 'restless ecstasy' — a state of frenzied, sleepless anxiety. He envies Duncan who rests peacefully in death while Macbeth himself cannot find a moment's peace. A bitter reversal." },
+            { q: "Thou canst not say I did it; never shake thy gory locks at me!", s: "Macbeth", act: "3.4", t: "Character", m: "Macbeth shouts at Banquo's ghost, trying to deny responsibility. But he ordered the murder — his guilt has taken physical form. By shouting at a ghost only he can see, he reveals his guilt to the entire court." },
+            { q: "What man dare, I dare.", s: "Macbeth", act: "3.4", t: "Character", m: "Macbeth asserts his courage when confronted by Banquo's ghost — yet he is visibly terrified. His claim to masculine bravery is undermined by his psychological collapse in front of his assembled court. Performance has replaced reality." },
+            { q: "From this moment, the very firstlings of my heart shall be the firstlings of my hand.", s: "Macbeth", act: "4.1", t: "Character", m: "Macbeth resolves to act on impulse without thinking or feeling — to translate every violent thought immediately into action. He has fully abandoned conscience and deliberation, becoming a pure instrument of violence." },
+            { q: "To crown my thoughts with acts, be it thought and done.", s: "Macbeth", act: "4.1", t: "Character", m: "Macbeth collapses the gap between thinking and doing — thought equals action. This marks complete moral dissolution: the self-reflection that once tormented him is entirely gone." },
+            { q: "Tyrant.", s: "Malcolm", act: "4.3", t: "Character", m: "Malcolm's one-word verdict on Macbeth. By Act 4, the man once called 'Brave Macbeth' and 'Noble Macbeth' is now simply a 'Tyrant'. The contrast between early descriptions and this single word traces his entire moral fall." },
+            { q: "It is a tale told by an idiot, full of sound and fury, signifying nothing.", s: "Macbeth", act: "5.5", t: "Character", m: "Part of the 'Tomorrow' soliloquy — Macbeth concludes that all of human life, including his own murderous reign, amounts to nothing. The man who killed for power now sees power itself as meaningless noise and fury." },
+            { q: "Bloodier villain than terms can give out.", s: "Macduff", act: "5.8", t: "Character", m: "Macduff's verdict after the final battle — Macbeth is too bloody a villain for even words to describe fully. Language itself cannot contain the scale of his crimes. Contrasts sharply with the heroic epithets of Act 1." },
+            { q: "Dead butcher.", s: "Malcolm", act: "5.8", t: "Character", m: "Malcolm's final two-word epitaph for Macbeth. 'Dead butcher' — brutal, dismissive, without honour. The man once called 'Noble Macbeth' and 'Valiant cousin' is reduced to an animal term. His legacy is butchery, nothing more." },
+            { q: "Hell hound.", s: "Macduff", act: "5.8", t: "Character", m: "Macduff calls Macbeth a 'hell hound' — an animal from hell, driven by evil. This damns Macbeth spiritually as well as morally. It echoes the witches' supernatural world and implies Macbeth was ultimately a servant of dark forces." },
+
+            // ── CHARACTER: BANQUO ──
+            { q: "What! can the devil speak true?", s: "Banquo", act: "1.3", t: "Character", m: "Banquo's reaction when the witches' first prophecy (Macbeth is Thane of Cawdor) proves true. He immediately suspects deception — even accurate prophecies from 'instruments of darkness' might be traps. This is the scepticism Macbeth lacks." },
+            { q: "You not hope your children shall be kings, when those that gave the Thane of Cawdor to me promised no less to them?", s: "Macbeth", act: "1.3", t: "Character", m: "Macbeth probes Banquo about the witches' prophecy — asking if Banquo hopes his children will be kings. It reveals Macbeth's obsession with the prophecy and plants the seed of his fear of Banquo's line." },
+            { q: "And oftentimes, to win us to our harm, the instruments of darkness tell us truths, win us with honest trifles, to betray's in deepest consequence.", s: "Banquo", act: "1.3", t: "Character", m: "Banquo's crucial warning: evil uses small truths to lead to greater destruction. He sees through the witches' strategy while Macbeth is already consumed by their prophecy. Banquo represents scepticism and moral clarity throughout." },
+            { q: "A heavy summons lies like lead upon me, and yet I would not sleep: merciful powers, restrain in me the cursed thoughts that nature gives way to in repose!", s: "Banquo", act: "2.1", t: "Character", m: "Banquo fights sleep because his dreams are troubled — probably with thoughts of the witches' prophecies. He prays to control his thoughts. This shows his moral struggle: he has ambitions too, but actively resists acting on them." },
+            { q: "And question this most bloody piece of work, to know it further. Fears and scruples shake us: In the great hand of God I stand, and thence, against the undivulged pretence I fight, of treasonous malice.", s: "Banquo", act: "2.3", t: "Character", m: "After Duncan's murder, Banquo declares he stands with God and will fight against treasonous forces. He suspects Macbeth but commits to righteous investigation. His cautious moral integrity contrasts with Macbeth's rush to violence." },
+            { q: "Thou hast it now: king, Cawdor, Glamis, all, as the weird women promised, and, I fear, thou play'dst most foully for't.", s: "Banquo", act: "3.1", t: "Character", m: "Banquo's private conclusion that Macbeth achieved the throne through foul play. He has seen through the deception — but stays silent rather than acting. His silence makes him complicit, which Macbeth correctly identifies as a threat." },
+
+            // ── CHARACTER: LADY MACBETH ──
+            { q: "Dearest chuck.", s: "Macbeth", act: "3.2", t: "Character", m: "Macbeth calls Lady Macbeth 'dearest chuck' (a term of endearment) — but notably doesn't tell her about his plans to murder Banquo. Their relationship has shifted: she drove events in Act 1, now he excludes her. The partnership is fracturing." },
+            { q: "Dearest partner of greatness.", s: "Lady Macbeth", act: "1.5", t: "Character", m: "Lady Macbeth reads Macbeth's letter and addresses him as 'dearest partner of greatness' — framing their relationship as an equal alliance aimed at power. She positions herself as co-conspirator, not just supportive wife." },
+            { q: "Hie thee hither, that I may pour my spirits in thine ear and chastise with the valour of my tongue all that impedes thee from the golden round.", s: "Lady Macbeth", act: "1.5", t: "Character", m: "Reading Macbeth's letter, Lady Macbeth immediately decides to manipulate him into action. She will 'pour spirits' into his ear — like a poison — and talk away all his hesitations. She casts herself as his driver and enabler." },
+            { q: "When you durst do it, then you were a man.", s: "Lady Macbeth", act: "1.7", t: "Character", m: "Lady Macbeth manipulates Macbeth by equating manhood with murder. She weaponises his sense of masculinity to override his moral hesitation — implying his reluctance to kill makes him less of a man." },
+            { q: "But screw your courage to the sticking-place and we'll not fail.", s: "Lady Macbeth", act: "1.7", t: "Character", m: "Lady Macbeth tells Macbeth to tighten his courage like a peg on a musical instrument. The phrase is brisk and practical — she treats murder as a technical problem to be solved with nerve and a plan." },
+            { q: "Had he not resembled my father as he slept, I had done't.", s: "Lady Macbeth", act: "2.2", t: "Character", m: "Lady Macbeth reveals she couldn't kill Duncan because he looked like her father. This tiny crack shows she is not as ruthless as she claimed — there is humanity underneath her steely ambition, and it will eventually destroy her." },
+            { q: "Naught's had, all's spent, where our desire is got without content. Tis safer to be that which we destroy, than by destruction dwell in doubtful joy.", s: "Lady Macbeth", act: "3.2", t: "Character", m: "Lady Macbeth privately admits they have gained everything and feel nothing — ambition has left them empty. She would rather be dead Duncan than living in fearful, joyless possession of what they killed to get." },
+            { q: "What's to be done?", s: "Lady Macbeth", act: "3.2", t: "Character", m: "Lady Macbeth's question shows the power dynamic has shifted — Macbeth no longer consults her on his murderous plans. She is being sidelined. The woman who drove events in Act 1 is now a passive bystander." },
+            { q: "Out, damned spot! Out, I say!", s: "Lady Macbeth", act: "5.1", t: "Character", m: "Sleepwalking, Lady Macbeth tries to wash imaginary blood from her hands — the very guilt she dismissed in Act 2 ('A little water clears us') has consumed her mind. A devastating reversal of her earlier cold rationality." },
+            { q: "What, will these hands ne'er be clean?", s: "Lady Macbeth", act: "5.1", t: "Character", m: "Lady Macbeth's haunted question in her sleep — the blood she cannot wash away represents guilt that has destroyed her sanity. She dismissed Macbeth's identical guilt in Act 2; now she suffers the same paralysing remorse." },
+            { q: "More needs she the divine than the physician.", s: "Doctor", act: "5.1", t: "Character", m: "The Doctor watching Lady Macbeth sleepwalk concludes her illness is spiritual, not medical — she needs a priest, not a doctor. Her condition is guilt, which medicine cannot cure. This signals her imminent death." },
+
+            // ── IMAGERY: BLOOD ──
+            { q: "Out, damned spot! Out, I say!", s: "Lady Macbeth", act: "5.1", t: "Blood", m: "Lady Macbeth's iconic sleepwalking line — she imagines blood that cannot be washed away. Blood imagery throughout the play represents guilt, murder, and the impossibility of escaping the consequences of violence." },
+            { q: "Bleed, bleed, poor country.", s: "Macduff", act: "4.3", t: "Blood", m: "Macduff personifies Scotland as a wounded body — bleeding under Macbeth's tyranny. Blood imagery shifts from individual guilt (Macbeth/Lady Macbeth's hands) to national suffering. Scotland itself is the victim." },
+            { q: "Thou canst not say I did it; never shake thy gory locks at me!", s: "Macbeth", act: "3.4", t: "Blood", m: "Macbeth addresses Banquo's ghost — whose 'gory locks' (blood-matted hair) are the visible evidence of his crime. Blood literally haunts him in the form of the ghost he ordered murdered." },
+            { q: "His gashed stabs looked like a breach in nature.", s: "Macbeth", act: "2.3", t: "Blood", m: "Macbeth describes Duncan's wounds as a 'breach' — a hole torn in nature itself. The blood from the wounds isn't just physical: it represents the rupture in divine and natural order caused by regicide." },
+
+            // ── IMAGERY: LIGHT & DARKNESS ──
+            { q: "Stars, hide your fires, let not light see my black and deep desires.", s: "Macbeth", act: "1.4", t: "Light", m: "Macbeth calls on darkness to conceal his murderous intentions from heaven. Stars represent divine oversight — their 'fires' would expose his 'black desires'. Darkness becomes his ally as he turns away from moral light." },
+            { q: "Come, thick night, and pall thee in the dunnest smoke of hell, that my keen knife see not the wound it makes, nor heaven peep through the blanket of the dark, to cry 'Hold, hold!'", s: "Lady Macbeth", act: "1.5", t: "Light", m: "Lady Macbeth calls for absolute darkness so heaven cannot intervene in the murder. She wants to blind both her knife and divine sight. 'Blanket of the dark' suggests smothering — suffocating conscience and God's view simultaneously." },
+            { q: "There's husbandry in heaven; their candles are all out.", s: "Banquo", act: "2.1", t: "Light", m: "Banquo uses the metaphor of candles (stars) being put out — heaven is 'economising'. The extinguishing of heavenly light on the night of the murder emphasises the withdrawal of divine grace from Scotland's darkening world." },
+            { q: "By the clock, 'tis day, and yet dark night strangles the travelling lamp.", s: "Ross", act: "2.4", t: "Light", m: "It's daytime but darkness persists — as if night is strangling the sun. Unnatural darkness continues after the murder. Light (truth, goodness, divine order) is being choked out of Scotland by Macbeth's reign." },
+            { q: "Come, seeling night, scarf up the tender eye of pitiful day.", s: "Macbeth", act: "3.2", t: "Light", m: "'Seeling' is a falconry term for sewing a bird's eyes shut. Macbeth asks night to blind the compassionate eye of daylight so his crimes go unseen. He has become comfortable in darkness — it is now his natural element." },
+            { q: "Out, out, brief candle! and I gin to be aweary of the sun.", s: "Macbeth", act: "5.5", t: "Light", m: "From the 'Tomorrow' soliloquy — Macbeth sees life as a briefly burning candle, easily extinguished. He is also 'aweary of the sun' — exhausted by the very light of life. His ambition has snuffed out all the candles around him." },
+
+            // ── IMAGERY: SLEEP ──
+            { q: "Glamis hath murdered sleep, and therefore Cawdor shall sleep no more, Macbeth shall sleep no more.", s: "Macbeth", act: "2.2", t: "Sleep", m: "Having killed Duncan in his sleep, Macbeth has destroyed his own ability to sleep — to find the peace and innocence sleep represents. The progression through his titles (Glamis, Cawdor, Macbeth) shows his whole identity is cursed." },
+            { q: "Sleep that knits up the ravelled sleeve of care, the death of each life's day, sore labour's bath, balm of hurt minds, great nature's second course, chief nourisher in life's feast.", s: "Macbeth", act: "2.2", t: "Sleep", m: "Macbeth lists everything sleep provides — repair, rest, healing, nourishment. The beauty of this image makes his self-condemnation devastating: by murdering sleeping Duncan, he has deprived himself of all these gifts forever." },
+            { q: "Had he not resembled my father as he slept, I had done't.", s: "Lady Macbeth", act: "2.2", t: "Sleep", m: "Lady Macbeth reveals she couldn't kill Duncan because his sleeping face reminded her of her father. Sleep is associated with vulnerability and innocence — even she cannot kill something that looks so defenceless and familiar." },
+            { q: "Shake off this downy sleep, death's counterfeit, and look on death itself!", s: "Macduff", act: "2.3", t: "Sleep", m: "Macduff shouts for everyone to wake up — comparing sleep to a 'counterfeit' (imitation) of death. The irony is brutal: Duncan's actual death is announced to people waking from sleep, the 'fake' version of what befell him." },
+            { q: "Duncan is in his grave after life's fitful fever he sleeps well.", s: "Macbeth", act: "3.2", t: "Sleep", m: "Macbeth envies Duncan — who sleeps peacefully in death while Macbeth cannot sleep at all. Life was a 'fitful fever' (restless illness) that Duncan has escaped. Macbeth's sleeplessness and Duncan's eternal rest are bitterly contrasted." },
+            { q: "You lack the season of all natures, sleep.", s: "Lady Macbeth", act: "3.4", t: "Sleep", m: "Lady Macbeth tells Macbeth he needs sleep — the 'season' (seasoning/preservative) of all living things. Ironically, she will later lose her own sleep to guilt. Here she still appears in control, while Macbeth's deterioration is visible." },
+            { q: "A great perturbation in nature, to receive at once the benefit of sleep, and do the effects of watching!", s: "Doctor", act: "5.1", t: "Sleep", m: "The Doctor observes Lady Macbeth gets the physical rest of sleep while her mind stays awake — sleepwalking. This 'perturbation in nature' mirrors the larger unnatural disruptions in Scotland caused by Macbeth's crimes." },
+
+            // ── IMAGERY: CHILDREN ──
+            { q: "Pity, like a naked new-born babe, striding the blast.", s: "Macbeth", act: "1.7", t: "Children", m: "Macbeth imagines Pity as a newborn baby exposed to the storm — helpless yet morally powerful. Even in his most murderous moment he can visualise pity. This shows his conscience is still alive, even as he suppresses it." },
+            { q: "I would, while it was smiling in my face, have plucked my nipple from its boneless gums, and dashed the brains out.", s: "Lady Macbeth", act: "1.7", t: "Children", m: "Lady Macbeth uses infanticide to prove her absolute commitment — she would kill a smiling baby at her breast if she had sworn to. It takes the most nurturing relationship (mother and infant) and converts it into violence." },
+            { q: "Finger of birth-strangled babe, ditch-delivered by a drab.", s: "Witches", act: "4.1", t: "Children", m: "The witches' potion includes the finger of a murdered illegitimate baby. Children — and infanticide — recur as imagery throughout the play. Macbeth has ordered the killing of Macduff's children; children symbolise the innocents he destroys." },
+            { q: "To leave his wife, to leave his babes, his mansion and his titles in a place from whence himself does fly?", s: "Lady Macduff", act: "4.2", t: "Children", m: "Lady Macduff cannot understand why Macduff fled to England and left his family unprotected. She calls it unnatural — a father abandoning his children. Tragically, her complaint precedes the very massacre Macduff feared." },
+
+            // ── IMAGERY: CLOTHING ──
+            { q: "The Thane of Cawdor lives; why do you dress me in borrow'd robes?", s: "Macbeth", act: "1.3", t: "Clothing", m: "Macbeth uses clothing imagery to question the witches' prophecy — the title doesn't fit him yet, it's like ill-fitting borrowed clothes. Ironically, he will soon seize the ultimate 'robe' — kingship — that fits him even less." },
+            { q: "New honours come upon him, like our strange garments, cleave not to their mould but with the aid of use.", s: "Banquo", act: "1.3", t: "Clothing", m: "Banquo says new honours are like new clothes — they need time to be worn in. He suggests Macbeth should wait for honours to come naturally. The image foreshadows Macbeth's ill-fitting kingship, stolen rather than earned." },
+            { q: "He hath honour'd me of late; and I have bought golden opinions from all sorts of people, which would be worn now in their newest gloss, not cast aside so soon.", s: "Macbeth", act: "1.7", t: "Clothing", m: "Macbeth argues against killing Duncan — he's just received honour and 'golden opinions' like gleaming new clothes. He knows murder will tarnish everything he's recently earned. This is Macbeth's clearest moment of moral clarity." },
+            { q: "Naked frailties hid, that suffer in exposure.", s: "Banquo", act: "2.3", t: "Clothing", m: "Banquo speaks of 'naked frailties' needing covering after the shock of Duncan's murder — people are vulnerably exposed. Clothing imagery suggests the horror has stripped people bare; they need protection and gathering together." },
+            { q: "Well, may you see things well done there: adieu! Lest our old robes sit easier than our new!", s: "Macduff", act: "2.4", t: "Clothing", m: "Macduff voices scepticism about Macbeth's kingship — he fears the 'new robes' of Macbeth's reign will be less comfortable than the old ones under Duncan. He is the first to openly express doubt about the new order." },
+            { q: "Those he commands move only in command, nothing in love: now does he feel his title hang loose about him, like a giant's robe upon a dwarfish thief.", s: "Angus", act: "5.2", t: "Clothing", m: "Angus uses clothing imagery to show kingship doesn't fit Macbeth — he stole the throne and it overwhelms him. 'Dwarfish thief' strips away all his remaining dignity. His men obey orders but feel no loyalty — the robe has no real king inside it." },
+
+            // ── KINGSHIP ──
+            { q: "Your highness' part is to receive our duties, and our duties are to your throne and state, children and servants which do but what they should by doing everything safe toward your love and honour.", s: "Macbeth", act: "1.4", t: "Kingship", m: "Macbeth professes loyalty to Duncan even as he plots against him. The language of duty, service, and love to the king is bitterly ironic — he uses the vocabulary of loyal kingship to mask treasonous ambition." },
+            { q: "Most sacrilegious murder hath broke open the lord's anointed temple and stole thence the life o'th'building.", s: "Macduff", act: "2.3", t: "Kingship", m: "Macduff calls Duncan's murder 'sacrilegious' — the king is God's anointed representative, so killing him is like desecrating a temple. This divine right of kings ideology makes regicide not just a political crime but a sin against God." },
+            { q: "Let your highness command upon me, to the which my duties are with a most indissoluble tie forever knit.", s: "Banquo", act: "3.1", t: "Kingship", m: "Banquo pledges absolute loyalty to Macbeth as king. The language ('indissoluble tie') is the language of feudal loyalty to the crown. Yet Banquo already suspects Macbeth — his pledge is politically necessary but morally compromised." },
+
+            // ── MASCULINITY ──
+            { q: "What beast was't, then, that made you break this enterprise to me? When you durst do it, then you were a man.", s: "Lady Macbeth", act: "1.7", t: "Masculinity", m: "Lady Macbeth shames Macbeth with the ultimate challenge to his masculinity — calling him less than a man for hesitating. She weaponises gender to override his conscience. Her definition of manhood: real men murder kings." },
+            { q: "We are men my liege.", s: "First Murderer", act: "3.1", t: "Masculinity", m: "The murderer asserts manhood to Macbeth — who has just questioned whether they are men (implying they are too weak to act). The exchange parodies the Lady Macbeth/Macbeth dynamic. Macbeth now uses the same manipulation on others." },
+            { q: "Ay, in the catalogue ye go for men; as hounds and greyhounds, mongrels, spaniels, curs, shoughs, water-rugs and demi-wolves, are clept all by the name of dogs.", s: "Macbeth", act: "3.1", t: "Masculinity", m: "Macbeth tells the murderers that being called 'men' means little — just as all dogs are called dogs regardless of quality. He challenges them to prove themselves the finest type of man, using Lady Macbeth's own tactic against them." },
+            { q: "What man dare, I dare.", s: "Macbeth", act: "3.4", t: "Masculinity", m: "Macbeth asserts his courage confronting Banquo's ghost — yet he is visibly terrified. His masculine posturing is hollow. He performs bravery for his court while his mind collapses. Masculinity has become pure theatre." },
+            { q: "Flaws and starts, impostors to true fear, would well become a woman's story at a winter's fire, authorised by her grandam. Shame itself!", s: "Lady Macbeth", act: "3.4", t: "Masculinity", m: "Lady Macbeth publicly dismisses Macbeth's ghost-fearing as womanly superstition. She weaponises gender again — his trembling is only fit for an old woman's fireside tale. Her cruelty here is extreme and publicly humiliating." },
+            { q: "Dispute it like a man.", s: "Malcolm", act: "4.3", t: "Masculinity", m: "Malcolm tells Macduff to respond to his family's massacre by fighting back. But Macduff's response redefines masculinity entirely. Malcolm's view — grief resolved through violence — is directly challenged." },
+            { q: "I shall do so. But I must also feel it as a man.", s: "Macduff", act: "4.3", t: "Masculinity", m: "Macduff refuses to suppress grief after his family is murdered. He will fight, but must also feel. This directly counters the play's earlier equations of masculinity with violence and emotional suppression — redefining what a man truly is." },
+
+            // ── SCOTLAND ──
+            { q: "It cannot be called our mother, but our grave.", s: "Ross", act: "4.3", t: "Scotland", m: "Scotland under Macbeth's tyranny is no longer life-giving — only a place of death. The motherland has become a graveyard. Ross's image captures how completely Macbeth's reign has inverted Scotland's natural nurturing role." },
+            { q: "Bleed, bleed poor country.", s: "Macduff", act: "4.3", t: "Scotland", m: "Macduff personifies Scotland as a wounded, bleeding creature under Macbeth's tyranny. The blood imagery that began as personal guilt (Macbeth's hands) has expanded to national suffering — the whole country bleeds." },
+
+            // ── GUILT ──
+            { q: "Or art thou but a dagger of the mind, a false creation, proceeding from the head.", s: "Macbeth", act: "2.1", t: "Guilt", m: "Macbeth questions whether the dagger is real or a hallucination from his 'heat-oppressed brain'. His guilt has begun generating visions before the murder even takes place — his mind is already punishing him for what he intends to do." },
+            { q: "Is this a dagger which I see before me.", s: "Macbeth", act: "2.1", t: "Guilt", m: "Macbeth's famous opening question to the dagger vision. The uncertainty — 'is this' — captures the collapse of his ability to distinguish reality from his guilty imagination. What he sees tells us about his mental state, not the world around him." },
+            { q: "I have thee not, and yet I see thee still.", s: "Macbeth", act: "2.1", t: "Guilt", m: "Macbeth can see the dagger but cannot touch it — it exists only in his mind. The gap between seeing and grasping is the gap between his moral self (which knows this is wrong) and his ambitious self (committed to murder)." },
+            { q: "I am afraid to think what I have done.", s: "Macbeth", act: "2.2", t: "Guilt", m: "Immediately after killing Duncan, Macbeth is horrified by his own actions. His conscience is so disturbed he cannot even confront the reality of what he has done. Unlike Lady Macbeth, his guilt is immediate and overwhelming." },
+            { q: "To know my deed, 'twere best not know my self.", s: "Macbeth", act: "2.2", t: "Guilt", m: "To face what he has done, Macbeth would have to lose his self-awareness entirely. He can only endure the crime by ceasing to be the moral person who committed it. Guilt forces him toward self-annihilation." },
+            { q: "These deeds must not be thought after these ways; so it will make us mad.", s: "Macbeth", act: "2.2", t: "Guilt", m: "Macbeth warns Lady Macbeth not to dwell on the murder — thinking about it will drive them insane. Deeply ironic: by Act 5, both are destroyed by exactly this — obsessive guilt they cannot suppress no matter how hard they try." },
+            { q: "But wherefore could I not pronounce 'Amen?' I had most need of blessing and 'Amen' stuck in my throat.", s: "Macbeth", act: "2.2", t: "Guilt", m: "After the murder, Macbeth finds he cannot say 'Amen'. He has cut himself off from God — his guilt manifests as inability to access divine grace. The word physically 'sticks', showing guilt as a bodily, not just mental, experience." },
+
+            // ── DECEPTION ──
+            { q: "There's no art to find the mind's construction in the face.", s: "Duncan", act: "1.4", t: "Deception", m: "Duncan says this about the traitorous Cawdor just before trusting Macbeth — the next traitor. His tragic inability to read faces marks him for death. The play will show that faces are systematically deceptive throughout." },
+            { q: "Look like th'innocent flower but be the serpent under't.", s: "Lady Macbeth", act: "1.5", t: "Deception", m: "Lady Macbeth's central instruction to Macbeth: maintain an innocent appearance while concealing murderous intent. This single line encapsulates the play's entire theme of deceptive appearance — the serpent beneath the flower." },
+            { q: "Away, and mock the time with fairest show, false face must hide what false heart doth know.", s: "Macbeth", act: "1.7", t: "Deception", m: "Macbeth embraces deception fully — he will 'mock the time' (fool the world) with a fair exterior. 'False face' and 'false heart' — both are now corrupted. He has internalised Lady Macbeth's lesson completely." },
+            { q: "I think not of them.", s: "Macbeth", act: "2.1", t: "Deception", m: "Macbeth lies to Banquo — claiming he hasn't thought about the witches when they occupy his every waking thought. This casual, direct lie to his closest friend marks a point of no return in his moral degradation." },
+            { q: "Thou play'dst most foully for't.", s: "Banquo", act: "3.1", t: "Deception", m: "Banquo's private conclusion that Macbeth achieved the throne through foul play. He has seen through the deception — but stays silent rather than acting. His silence makes him complicit, which Macbeth correctly senses as a danger." },
+
+        ];
+
+        const THEMES = [...new Set(QUOTES.map(q => q.t))].sort();
+        const SPEAKERS = [...new Set(QUOTES.map(q => q.s))].sort();
+
+        let mode = 'mcq', filterTheme = 'all', questions = [], current = 0, score = 0, answered = false;
+
+        document.querySelectorAll('.mode-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active'); mode = card.dataset.mode;
+                document.getElementById('filter-tabs').style.display = mode === 'browse' ? 'none' : 'flex';
+            });
+        });
+
+        document.querySelectorAll('#filter-tabs .tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('#filter-tabs .tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active'); filterTheme = tab.dataset.theme;
+            });
+        });
+
+        document.getElementById('start-btn').addEventListener('click', () => {
+            if (mode === 'browse') { showBrowse(); return; } startQuiz();
+        });
+
+        function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+        function getPool() { return filterTheme === 'all' ? QUOTES : QUOTES.filter(q => q.t === filterTheme); }
+
+        function startQuiz() {
+            const pool = getPool();
+            if (!pool.length) { alert('No quotes for that theme!'); return; }
+            questions = shuffle(pool).slice(0, Math.min(10, pool.length));
+            current = 0; score = 0; answered = false;
+            document.getElementById('home-screen').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'block';
+            document.getElementById('q-total').textContent = questions.length;
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            if (current >= questions.length) { showEnd(); return; }
+            const q = questions[current]; answered = false;
+            document.getElementById('q-num').textContent = current + 1;
+            document.getElementById('score-num').textContent = score;
+            document.getElementById('progress-bar').style.width = ((current / questions.length) * 100) + '%';
+
+            let opts;
+            if (mode === 'mcq') {
+                const correct = q.s;
+                const wrongs = shuffle(SPEAKERS.filter(s => s !== correct)).slice(0, 3);
+                opts = shuffle([correct, ...wrongs]);
+            } else {
+                const correct = q.t;
+                const wrongs = shuffle(THEMES.filter(t => t !== correct)).slice(0, 3);
+                opts = shuffle([correct, ...wrongs]);
+            }
+
+            const label = mode === 'mcq' ? 'Who said this?' : 'Which theme does this quote belong to?';
+
+            document.getElementById('game-area').innerHTML = `
+    <div class="quiz-card">
+      <div class="theme-badge">${q.t} · ${q.act}</div>
+      <div class="quote-text">${q.q}</div>
+      <div class="speaker-line">${mode === 'mcq' ? '— ???' : '— ' + q.s + ' (' + q.act + ')'}</div>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:12px;">${label}</p>
+      <div class="options">${opts.map(o => `<button class="opt-btn" data-answer="${o}">${o}</button>`).join('')}</div>
+      <div class="meaning-box" id="meaning-box">
+        <div class="meaning-label">What it means</div>
+        <div class="meaning-text">${q.m}</div>
+      </div>
+      <div class="action-row" id="action-row" style="display:none">
+        <button class="btn btn-primary" id="next-btn">${current + 1 < questions.length ? 'Next →' : 'See Results →'}</button>
+        <span id="feedback-text"></span>
+      </div>
+    </div>`;
+
+            document.querySelectorAll('.opt-btn').forEach(btn => {
+                btn.addEventListener('click', () => handleAnswer(btn, q));
+            });
+        }
+
+        function handleAnswer(btn, q) {
+            if (answered) return; answered = true;
+            const chosen = btn.dataset.answer;
+            const correct = mode === 'mcq' ? q.s : q.t;
+            const isCorrect = chosen === correct;
+            if (isCorrect) { score++; btn.classList.add('correct'); }
+            else {
+                btn.classList.add('wrong');
+                document.querySelectorAll('.opt-btn').forEach(b => { if (b.dataset.answer === correct) b.classList.add('correct'); });
+            }
+            document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+            document.getElementById('meaning-box').style.display = 'block';
+            const ar = document.getElementById('action-row'); ar.style.display = 'flex';
+            document.getElementById('feedback-text').innerHTML = isCorrect
+                ? '<span class="feedback-correct">✓ Correct!</span>'
+                : `<span class="feedback-wrong">✗ It was <strong>${correct}</strong></span>`;
+            document.getElementById('next-btn').addEventListener('click', () => { current++; renderQuestion(); });
+        }
+
+        function showEnd() {
+            document.getElementById('score-num').textContent = score;
+            document.getElementById('progress-bar').style.width = '100%';
+            const pct = Math.round((score / questions.length) * 100);
+            const msgs = [
+                [0, 40, '"Something wicked this way comes..." Keep studying! 📚'],
+                [40, 70, '"Stars, hide your fires" — you\'re getting there! ⭐'],
+                [70, 90, '"Brave Macbeth — well he deserves that name!" 🗡️'],
+                [90, 101, '"What he hath lost, noble Macbeth hath won." Full marks! 👑']
+            ];
+            const msg = msgs.find(m => pct >= m[0] && pct < m[1])[2];
+            document.getElementById('game-area').innerHTML = `
+    <div class="end-card">
+      <div class="end-score">${score}/${questions.length}</div>
+      <div class="end-label" style="margin-top:6px">${pct}% correct</div>
+      <div class="end-msg">${msg}</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" id="retry-btn">Try Again →</button>
+        <button class="btn" id="home-end-btn">← Home</button>
+      </div>
+    </div>`;
+            document.getElementById('retry-btn').addEventListener('click', startQuiz);
+            document.getElementById('home-end-btn').addEventListener('click', () => {
+                document.getElementById('quiz-screen').style.display = 'none';
+                document.getElementById('home-screen').style.display = 'block';
+            });
+        }
+
+        function showBrowse() {
+            document.getElementById('home-screen').style.display = 'none';
+            document.getElementById('browse-screen').style.display = 'block';
+            renderBrowse('all');
+            const bf = document.getElementById('browse-filter');
+            bf.innerHTML = ['all', ...THEMES].map(t =>
+                `<button class="tab ${t === 'all' ? 'active' : ''}" data-theme="${t}">${t === 'all' ? 'All (' + QUOTES.length + ')' : t}</button>`
+            ).join('');
+            bf.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    bf.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active'); renderBrowse(tab.dataset.theme);
+                });
+            });
+        }
+
+        function renderBrowse(theme) {
+            const pool = theme === 'all' ? QUOTES : QUOTES.filter(q => q.t === theme);
+            document.getElementById('browse-count').textContent = pool.length + ' quotes';
+            document.getElementById('browse-area').innerHTML = pool.map(q => `
+    <div class="browse-card">
+      <div class="theme-badge" style="margin-bottom:10px">${q.t} · ${q.act}</div>
+      <div class="browse-quote">"${q.q}"</div>
+      <div class="browse-meta">— ${q.s} &nbsp;·&nbsp; Click to reveal meaning</div>
+      <div class="browse-meaning">${q.m}</div>
+    </div>`).join('');
+            document.querySelectorAll('.browse-card').forEach(card => {
+                card.addEventListener('click', () => card.classList.toggle('open'));
+            });
+        }
+
+        document.getElementById('back-browse-btn').addEventListener('click', () => {
+            document.getElementById('browse-screen').style.display = 'none';
+            document.getElementById('home-screen').style.display = 'block';
+        });
+    </script>
 </body>
+
 </html>
